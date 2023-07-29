@@ -7,7 +7,7 @@ const usersRouter = require("./routes/api/users")
 
 require("dotenv").config();
 
-const { middlewarePostPut, middlewarePatch, middlewareUsers } = require("./middlewares");
+const { middlewarePostPut, middlewarePatch, middlewareUsers, middlewareAuth } = require("./middlewares");
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/contacts", middlewarePostPut, middlewarePatch, contactsRouter);
+app.use("/api/contacts", middlewarePostPut, middlewarePatch, middlewareAuth, contactsRouter);
 app.use("/api/users", middlewareUsers, usersRouter);
 
 app.use((req, res) => {
