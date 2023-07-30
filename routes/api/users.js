@@ -1,5 +1,5 @@
 const express = require("express");
-const { middlewareUsers, middlewareAuth } = require("../../middlewares");
+const { middlewareUsers, middlewareAuth, middlewareUserSubcription } = require("../../middlewares");
 const router = express.Router();
 
 const {
@@ -7,8 +7,10 @@ const {
   loginController,
   logoutController,
   currentUserController,
+  updateSubscriptionController,
 } = require("../../controllers/users");
 
+router.patch("/", middlewareAuth, middlewareUserSubcription, updateSubscriptionController);
 router.post("/register", middlewareUsers, registerController);
 router.post("/login", middlewareUsers, loginController);
 router.post("/logout", middlewareAuth, logoutController);
