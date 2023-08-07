@@ -1,6 +1,7 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const multer = require("multer");
 
 const contactsRouter = require("./routes/api/contacts");
 const usersRouter = require("./routes/api/users")
@@ -28,7 +29,10 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message });
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({message: err.message});
+}
+  res.status(err.status || 500).json({ message: err.message });
 });
 
 module.exports = app;
