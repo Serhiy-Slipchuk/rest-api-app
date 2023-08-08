@@ -1,14 +1,18 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 const { User } = require("../../models/user");
 
 const registerController = async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, email } = req.body;
 
     const hashPassword = await bcrypt.hash(password, 9);
 
-    const newUser = await User.create({ ...req.body, password: hashPassword });
+    const hashEmail = crypto.createHash("md5").update(email).digest("hex");
+    const avatar = `https://www.gravatar.com/avatar/${hashEmail}.jpg?d=identicon`;
+
+    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL: avatar });
 
     res.status(201).json({
       status: 201,
