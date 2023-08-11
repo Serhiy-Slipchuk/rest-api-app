@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const { sendEmail } = require("../../services")
 
 const { User } = require("../../models/user");
 
@@ -12,7 +13,23 @@ const registerController = async (req, res) => {
     const hashEmail = crypto.createHash("md5").update(email).digest("hex");
     const avatar = `https://www.gravatar.com/avatar/${hashEmail}.jpg?d=identicon`;
 
-    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL: avatar });
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
+    const newUser = await User.create({
+      ...req.body,
+      password: hashPassword,
+      avatarURL: avatar,
+      verificationToken
+    });
+
+    const verifyEmail = {
+      to: email,
+      from: process.env.EMAIL_FROM,
+      subject: "Verify your email",
+      html: `<p>Click this <a target="_blanc" href="${process.env.BACKEND_HOST}/api/users/verify/${verificationToken}">LINK</a> to complete verification your e-mail address</p>`
+    }
+    sendEmail(verifyEmail);
+
 
     res.status(201).json({
       status: 201,
