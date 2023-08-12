@@ -12,6 +12,11 @@ const loginController = async (req, res) => {
       return;
     }
 
+    if (!user.verify) {
+      res.status(401).json({ message: "Email is not verified"});
+      return
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
